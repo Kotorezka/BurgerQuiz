@@ -105,22 +105,24 @@ document.addEventListener('DOMContentLoaded', () => {
     const playTest = () => {
         let numberQuestion = 0;
         if (numberQuestion == 0) {
-            prevButton.hide;
+            prevButton.disabled;
         }
         renderQuestions(numberQuestion);
         renderAnswers(numberQuestion);
-        nextButton.onClick = () => {
+        nextButton.onclick = () => {
             numberQuestion++;
+            console.log('Кнопка далее');
             if (numberQuestion == questions.length-1) {
-                nextButton.hide;
+                nextButton.disabled;
             }
             renderQuestions(numberQuestion);
             renderAnswers(numberQuestion);
         };
-        prevButton.onClick = () => {
+        prevButton.onclick = () => {
             numberQuestion--;
+            console.log('Кнопка назад');
             if (numberQuestion == 0) {
-                prevButton.hide;
+                prevButton.disabled
             }
             renderQuestions(numberQuestion);
             renderAnswers(numberQuestion);
