@@ -104,26 +104,22 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     const playTest = () => {
         let numberQuestion = 0;
-        if (numberQuestion == 0) {
-            prevButton.disabled;
-        }
+        numberQuestion == 0 ? prevButton.style.display = 'none': prevButton.style.display = 'block';
         renderQuestions(numberQuestion);
         renderAnswers(numberQuestion);
         nextButton.onclick = () => {
             numberQuestion++;
-            console.log('Кнопка далее');
-            if (numberQuestion == questions.length-1) {
-                nextButton.disabled;
-            }
+            console.log(numberQuestion);
+            numberQuestion == 0 ? prevButton.style.display = 'none': prevButton.style.display = 'block';
+            numberQuestion == questions.length-1 ? nextButton.style.display = 'none': nextButton.style.display = 'block';
             renderQuestions(numberQuestion);
             renderAnswers(numberQuestion);
         };
         prevButton.onclick = () => {
             numberQuestion--;
-            console.log('Кнопка назад');
-            if (numberQuestion == 0) {
-                prevButton.disabled
-            }
+            console.log(numberQuestion);
+            numberQuestion == 0 ? prevButton.style.display = 'none': prevButton.style.display = 'block';
+            numberQuestion == questions.length-1 ? nextButton.style.display = 'none': nextButton.style.display = 'block';
             renderQuestions(numberQuestion);
             renderAnswers(numberQuestion);
         };
