@@ -115,10 +115,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 prevButton.style.display = 'none';
                 nextButton.style.display = 'block';
                 sendButton.display = 'none';  
+                break;
             case (numberQuestion > 0 && numberQuestion < questions.length):
                 prevButton.style.display = 'block';
                 nextButton.style.display = 'block';
                 sendButton.display = 'none';
+                break;
             case (numberQuestion === questions.length):
                 prevButton.style.display = 'none';
                 nextButton.style.display = 'none';
@@ -129,8 +131,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     <input type="phone" class="form-control" id="numberPhone">
                 </div>    
                 `;
+                break;
             case (numberQuestion === questions.length+1):
-                formAnswers.textContent = 'Спасибо';         
+                formAnswers.textContent = 'Спасибо';
+                break;         
 
         }
     }
