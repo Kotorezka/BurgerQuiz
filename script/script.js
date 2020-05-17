@@ -114,17 +114,21 @@ document.addEventListener('DOMContentLoaded', () => {
             case (numberQuestion === 0):
                 prevButton.style.display = 'none';
                 nextButton.style.display = 'block';
-                sendButton.display = 'none';  
+                sendButton.display = 'none';
+                renderCard(numberQuestion);  
                 break;
             case (numberQuestion > 0 && numberQuestion < questions.length):
                 prevButton.style.display = 'block';
                 nextButton.style.display = 'block';
                 sendButton.display = 'none';
+                renderCard(numberQuestion);
                 break;
             case (numberQuestion === questions.length):
                 prevButton.style.display = 'none';
                 nextButton.style.display = 'none';
+                sendButton.classList.remove('d-none');
                 sendButton.display = 'block';
+                questionTitle.textContent = '';
                 formAnswers.innerHTML =`
                 <div class = "form-group">
                     <label for="numberPhone">Enter your phone number</label>
@@ -133,12 +137,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 `;
                 break;
             case (numberQuestion === questions.length+1):
+                questionTitle.textContent = '';
                 formAnswers.textContent = 'Спасибо';
+                sendButton.display = 'none';
+                
                 break;         
 
         }
     }
-    const checkAnswer = () => {
+    const checkAnswer = (numberQuestion) => {
         const obj = {};
         const inputs = [...formAnswers.elements].filter((input) => input.checked || input.id === 'numberPhone');
         inputs.forEach((input, index) => {
@@ -156,12 +163,12 @@ document.addEventListener('DOMContentLoaded', () => {
         questionCountChecker(numberQuestion);
         renderCard(numberQuestion);
         nextButton.onclick = () => {
-            checkAnswer();
+            checkAnswer(numberQuestion);
             questionCountChecker(numberQuestion);
             numberQuestion++;
             console.log(numberQuestion);
             questionCountChecker(numberQuestion);
-            renderCard(numberQuestion);
+            
         };
         prevButton.onclick = () => {
             numberQuestion--;
@@ -171,9 +178,8 @@ document.addEventListener('DOMContentLoaded', () => {
         };
         sendButton.onclick = () => {
             numberQuestion++
-            renderQuestions(numberQuestion);
-            renderQuestions(numberQuestion);
-            checkAnswer();
+            questionCountChecker(numberQuestion);
+            checkAnswer(numberQuestion);
 
         }
         
