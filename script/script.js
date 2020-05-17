@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     btnOpenModal = document.querySelector('#btnOpenModal'),
     nextButton = document.querySelector('#next'),
     prevButton = document.querySelector('#prev'),
+    sendButton = document.querySelector('#send'),
     questions = [
         {
             question: "Какого цвета бургер?",
@@ -82,7 +83,8 @@ document.addEventListener('DOMContentLoaded', () => {
             ],
             type: 'radio'
         }
-    ];
+    ],
+    finalAnswers = [];
     // Функции    
     const renderQuestions = (indexQuestion) => {
         formAnswers.innerHTML = ``;
@@ -93,7 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const answerItem = document.createElement('div');
             answerItem.classList.add('answers-item', 'd-flex', 'flex-column');
             answerItem.innerHTML = `
-                <input type="${questions[index].type}" id="${answer.title}" name="answer" class="d-none">
+                <input type="${questions[index].type}" id="${answer.title}" name="answer" class="d-none" value="${answer.title}">
                 <label for="${answer.title}" class="d-flex flex-column justify-content-between">
                     <img class="answerImg" src="${answer.url}" alt="burger">
                     <span>${answer.title}</span>
@@ -102,27 +104,75 @@ document.addEventListener('DOMContentLoaded', () => {
             formAnswers.appendChild(answerItem);
         })
     }
+    const renderCard = (index) => {
+        renderQuestions(index);
+        renderAnswers(index);
+    }
+    const questionCountChecker = (numberQuestion) => {
+        
+        switch (true) {
+            case (numberQuestion === 0):
+                prevButton.style.display = 'none';
+                nextButton.style.display = 'block';
+                sendButton.display = 'none';  
+            case (numberQuestion > 0 && numberQuestion < questions.length):
+                prevButton.style.display = 'block';
+                nextButton.style.display = 'block';
+                sendButton.display = 'none';
+            case (numberQuestion === questions.length):
+                prevButton.style.display = 'none';
+                nextButton.style.display = 'none';
+                sendButton.display = 'block';
+                formAnswers.innerHTML =`
+                <div class = "form-group">
+                    <label for="numberPhone">Enter your phone number</label>
+                    <input type="phone" class="form-control" id="numberPhone">
+                </div>    
+                `;
+            case (numberQuestion === questions.length+1):
+                formAnswers.textContent = 'Спасибо';         
+
+        }
+    }
+    const checkAnswer = () => {
+        const obj = {};
+        const inputs = [...formAnswers.elements].filter((input) => input.checked || input.id === 'numberPhone');
+        inputs.forEach((input, index) => {
+            if (numberQuestion >= 0 && numberQuestion < questions.length - 1){
+                obj[`${index}_${questions[numberQuestion].question}`] = input.value;
+            }
+            if (numberQuestion === questions.length) {
+                obj["Номер телефона"] = input.value;
+            }    
+        })
+        finalAnswers.push(obj);
+    }
     const playTest = () => {
         let numberQuestion = 0;
-        numberQuestion == 0 ? prevButton.style.display = 'none': prevButton.style.display = 'block';
-        renderQuestions(numberQuestion);
-        renderAnswers(numberQuestion);
+        questionCountChecker(numberQuestion);
+        renderCard(numberQuestion);
         nextButton.onclick = () => {
+            checkAnswer();
+            questionCountChecker(numberQuestion);
             numberQuestion++;
             console.log(numberQuestion);
-            numberQuestion == 0 ? prevButton.style.display = 'none': prevButton.style.display = 'block';
-            numberQuestion == questions.length-1 ? nextButton.style.display = 'none': nextButton.style.display = 'block';
-            renderQuestions(numberQuestion);
-            renderAnswers(numberQuestion);
+            questionCountChecker(numberQuestion);
+            renderCard(numberQuestion);
         };
         prevButton.onclick = () => {
             numberQuestion--;
             console.log(numberQuestion);
-            numberQuestion == 0 ? prevButton.style.display = 'none': prevButton.style.display = 'block';
-            numberQuestion == questions.length-1 ? nextButton.style.display = 'none': nextButton.style.display = 'block';
-            renderQuestions(numberQuestion);
-            renderAnswers(numberQuestion);
+            questionCountChecker(numberQuestion);
+            renderCard(numberQuestion);
         };
+        sendButton.onclick = () => {
+            numberQuestion++
+            renderQuestions(numberQuestion);
+            renderQuestions(numberQuestion);
+            checkAnswer();
+
+        }
+        
     }
 
     // События
