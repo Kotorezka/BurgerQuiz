@@ -129,14 +129,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const getData = () => {
-        firebase.database().ref().child('questions').once('value')
-            .then(snap => playTest(snap.val()))
+        
+       firebase.database().ref().child('questions').once('value').then(snap => playTest(snap.val()));
     } 
 
     // События
     btnOpenModal.addEventListener('click', () => {
         modalBlock.classList.add('d-block');
-        playTest();
+        firebase.database().ref().child('questions').once('value').then(snap => console.log(snap.val()));
+        getData();
     });
     closeModal.addEventListener('click', () => {
         modalBlock.classList.remove('d-block');
