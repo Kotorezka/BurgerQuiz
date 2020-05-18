@@ -10,87 +10,25 @@ document.addEventListener('DOMContentLoaded', () => {
     nextButton = document.querySelector('#next'),
     prevButton = document.querySelector('#prev'),
     sendButton = document.querySelector('#send'),
-    questions = [
-        {
-            question: "Какого цвета бургер?",
-            answers: [
-                {
-                    title: 'Стандарт',
-                    url: './image/burger.png'
-                },
-                {
-                    title: 'Черный',
-                    url: './image/burgerBlack.png'
-                }
-            ],
-            type: 'radio'
+    firebaseConfig = {
+        apiKey: "AIzaSyDd2ivqTGDTylGt_TLkKN2wPlYXvoGbo4w",
+        authDomain: "burgerquiz-fce87.firebaseapp.com",
+        databaseURL: "https://burgerquiz-fce87.firebaseio.com",
+        projectId: "burgerquiz-fce87",
+        storageBucket: "burgerquiz-fce87.appspot.com",
+        messagingSenderId: "1085243411500",
+        appId: "1:1085243411500:web:b63190cb4bee21f1701589",
+        measurementId: "G-4V29XJN860"
         },
-        {
-            question: "Из какого мяса котлета?",
-            answers: [
-                {
-                    title: 'Курица',
-                    url: './image/chickenMeat.png'
-                },
-                {
-                    title: 'Говядина',
-                    url: './image/beefMeat.png'
-                },
-                {
-                    title: 'Свинина',
-                    url: './image/porkMeat.png'
-                }
-            ],
-            type: 'radio'
-        },
-        {
-            question: "Дополнительные ингредиенты?",
-            answers: [
-                {
-                    title: 'Помидор',
-                    url: './image/tomato.png'
-                },
-                {
-                    title: 'Огурец',
-                    url: './image/cucumber.png'
-                },
-                {
-                    title: 'Салат',
-                    url: './image/salad.png'
-                },
-                {
-                    title: 'Лук',
-                    url: './image/onion.png'
-                }
-            ],
-            type: 'checkbox'
-        },
-        {
-            question: "Добавить соус?",
-            answers: [
-                {
-                    title: 'Чесночный',
-                    url: './image/sauce1.png'
-                },
-                {
-                    title: 'Томатный',
-                    url: './image/sauce2.png'
-                },
-                {
-                    title: 'Горчичный',
-                    url: './image/sauce3.png'
-                }
-            ],
-            type: 'radio'
-        }
-    ],
     finalAnswers = [];
-    // Функции    
-    const renderQuestions = (indexQuestion) => {
+    firebase.initializeApp(firebaseConfig);
+    // Функции
+    
+    const renderQuestions = (indexQuestion, questions) => {
         formAnswers.innerHTML = ``;
         questionTitle.textContent = `${questions[indexQuestion].question}`;
     }
-    const renderAnswers = (index) => {
+    const renderAnswers = (index, questions) => {
         questions[index].answers.forEach((answer) => {
             const answerItem = document.createElement('div');
             answerItem.classList.add('answers-item', 'd-flex', 'flex-column');
@@ -104,11 +42,11 @@ document.addEventListener('DOMContentLoaded', () => {
             formAnswers.appendChild(answerItem);
         })
     }
-    const renderCard = (index) => {
-        renderQuestions(index);
-        renderAnswers(index);
+    const renderCard = (index, questions) => {
+        renderQuestions(index, questions);
+        renderAnswers(index, questions);
     }
-    const questionCountChecker = (numberQuestion) => {
+    const questionCountChecker = (numberQuestion, questions) => {
         
         switch (true) {
             case (numberQuestion === 0):
@@ -145,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         }
     }
-    const checkAnswer = (numberQuestion) => {
+    const checkAnswer = (numberQuestion, questions) => {
         const obj = {};
         const inputs = [...formAnswers.elements].filter((input) => input.checked || input.id === 'numberPhone');
         inputs.forEach((input, index) => {
@@ -158,32 +96,42 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         finalAnswers.push(obj);
     }
-    const playTest = () => {
+    const playTest = (questions) => {
         let numberQuestion = 0;
-        questionCountChecker(numberQuestion);
-        renderCard(numberQuestion);
+        questionCountChecker(numberQuestion, questions);
+        renderCard(numberQuestion, questions);
         nextButton.onclick = () => {
-            checkAnswer(numberQuestion);
-            questionCountChecker(numberQuestion);
+            checkAnswer(numberQuestion, questions);
+            questionCountChecker(numberQuestion, questions);
             numberQuestion++;
-            console.log(numberQuestion);
-            questionCountChecker(numberQuestion);
+            console.log(numberQuestion, questions);
+            questionCountChecker(numberQuestion, questions);
             
         };
         prevButton.onclick = () => {
             numberQuestion--;
-            console.log(numberQuestion);
-            questionCountChecker(numberQuestion);
-            renderCard(numberQuestion);
+            console.log(numberQuestion, questions);
+            questionCountChecker(numberQuestion, questions);
+            renderCard(numberQuestion, questions);
         };
         sendButton.onclick = () => {
             numberQuestion++
-            questionCountChecker(numberQuestion);
-            checkAnswer(numberQuestion);
+            questionCountChecker(numberQuestion, questions);
+            checkAnswer(numberQuestion, questions);
+            firebase
+                .database()
+                .ref()
+                .child('contacts')
+                .push(finalAnswers);
 
         }
         
     }
+
+    const getData = () => {
+        firebase.database().ref().child('questions').once('value')
+            .then(snap => playTest(snap.val()))
+    } 
 
     // События
     btnOpenModal.addEventListener('click', () => {
